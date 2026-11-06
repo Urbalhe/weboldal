@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendelés · Műhely</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/" aria-label="Műhely Webshop főoldal">MŰHELY</a>
+        <div class="topbar-links">
+            <span><span class="top-icon" aria-hidden="true">⌑</span> Biztonságos fizetés</span>
+            <a href="tel:+3612345678"><span class="top-icon" aria-hidden="true">♧</span> Segítség</a>
+        </div>
+    </header>
+
+    <main class="checkout">
+        <a class="back-link" href="/" aria-label="Vissza a webshopba">‹</a>
+        <div class="checkout-grid">
+            <form method="post" class="checkout-main" id="order-form" novalidate>
+                <% if (!configurationReady) { %>
+                    <div class="notice notice-error" role="alert">
+                        Mintaüzem: fizetés nem történik. Az emailküldéshez Gmail SMTP-beállítás szükséges.
+                    </div>
+                <% } %>
+                <% if (locals.success) { %>
+                    <div class="notice notice-success" role="status"><%= success %></div>
+                <% } %>
+                <% if (locals.error) { %>
+                    <div class="notice notice-error" role="alert"><%= error %></div>
+                <% } %>
+
+                <section class="checkout-step" aria-labelledby="customer-title">
+                    <div class="step-heading">
+                        <span class="step-number">1</span>
+                        <h1 id="customer-title">Vásárlói adatok</h1>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Adja meg a rendeléshez szükséges kapcsolattartási adatait.</p>
+                        <div class="field">
+                            <label for="name">Teljes név <span>*</span></label>
+                            <input id="name" name="name" type="text" autocomplete="name"
+                                value="<%= formData.name %>" required>
+                        </div>
+                        <div class="field">
+                            <label for="phone_number">Telefonszám <span>*</span></label>
+                            <input id="phone_number" name="phone_number" type="tel" autocomplete="tel"
+                                placeholder="+36 30 123 4567" value="<%= formData.phone_number %>" required>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="checkout-step" aria-labelledby="delivery-title">
+                    <div class="step-heading">
+                        <span class="step-number">2</span>
+                        <h2 id="delivery-title">Számlázás és szállítás</h2>
+                    </div>
+                    <div class="step-content">
+                        <fieldset class="address-group">
+                            <legend>Számlázási cím</legend>
+                            <div class="address-grid">
+                                <div class="field">
+                                    <label for="billing_city">Város <span>*</span></label>
+                                    <input id="billing_city" name="billing_city" type="text"
+                                        autocomplete="address-level2" value="<%= formData.billing_city %>" required>
+                                </div>
+                                <div class="field">
+                                    <label for="billing_postal_code">Irányítószám <span>*</span></label>
+                                    <input id="billing_postal_code" name="billing_postal_code" type="text"
+                                        inputmode="numeric" autocomplete="postal-code" maxlength="4"
+                                        value="<%= formData.billing_postal_code %>" required>
+                                </div>
+                                <div class="field field-wide">
+                                    <label for="billing_street">Utca és házszám <span>*</span></label>
+                                    <input id="billing_street" name="billing_street" type="text"
+                                        autocomplete="street-address" value="<%= formData.billing_street %>" required>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="address-group">
+                            <legend>Szállítási cím</legend>
+                            <div class="address-grid">
+                                <div class="field">
+                                    <label for="shipping_city">Város <span>*</span></label>
+                                    <input id="shipping_city" name="shipping_city" type="text"
+                                        value="<%= formData.shipping_city %>" required>
+                                </div>
+                                <div class="field">
+                                    <label for="shipping_postal_code">Irányítószám <span>*</span></label>
+                                    <input id="shipping_postal_code" name="shipping_postal_code" type="text"
+                                        inputmode="numeric" maxlength="4" value="<%= formData.shipping_postal_code %>"
+                                        required>
+                                </div>
+                                <div class="field field-wide">
+                                    <label for="shipping_street">Utca és házszám <span>*</span></label>
+                                    <input id="shipping_street" name="shipping_street" type="text"
+                                        value="<%= formData.shipping_street %>" required>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </section>
+
+                <section class="checkout-step" aria-labelledby="payment-title">
+                    <div class="step-heading">
+                        <span class="step-number">3</span>
+                        <h2 id="payment-title">Fizetés</h2>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Ez csak minta rendelés: fizetés nem történik. A visszaigazolást erre a címre küldjük: <strong><%= emailRecipient %></strong></p>
+                        <div class="field">
+                            <label for="coupon_code">Kuponkód <span class="optional">(opcionális)</span></label>
+                            <input id="coupon_code" name="coupon_code" type="text" placeholder="PT-1255"
+                                value="<%= formData.coupon_code %>">
+                        </div>
+                        <div class="payment-provider">
+                            <span class="demo-wordmark">MINTA</span>
+                            <span>Nincs valódi fizetés vagy terhelés</span>
+                        </div>
+                        <button class="continue-button" type="submit">Minta visszaigazolás küldése</button>
+                    </div>
+                </section>
+                <p class="privacy-note">Személyes adatait kizárólag rendelése teljesítéséhez használjuk fel.</p>
+            </form>
+
+            <aside class="checkout-aside">
+                <section class="summary-card" aria-labelledby="summary-title">
+                    <div class="summary-heading">
+                        <h2 id="summary-title">Az Ön kosara <span>(1)</span></h2>
+                        <a href="#products">Termék módosítása</a>
+                    </div>
+                    <fieldset class="product-list" id="products">
+                        <legend class="visually-hidden">Válasszon terméket</legend>
+                        <% products.forEach((product) => { %>
+                            <label class="product-option">
+                                <input type="radio" name="product_id" value="<%= product.id %>"
+                                    form="order-form" <%= formData.product_id === product.id ? 'checked' : '' %>>
+                                <img src="<%= product.image %>" alt="">
+                                <span class="product-copy">
+                                    <span class="product-name"><%= product.name %></span>
+                                    <span class="product-price" data-price="<%= product.price %>">
+                                        <%= product.price.toLocaleString('hu-HU') %> Ft
+                                    </span>
+                                </span>
+                            </label>
+                        <% }); %>
+                    </fieldset>
+                    <div class="price-breakdown">
+                        <p><span>Részösszeg</span><strong id="subtotal"></strong></p>
+                        <p><span>Szállítás</span><strong>Ingyenes</strong></p>
+                    </div>
+                    <div class="total-row">
+                        <span>Végösszeg</span>
+                        <strong id="total"></strong>
+                    </div>
+                </section>
+
+                <section class="benefits-card" aria-label="Szállítási és fizetési információk">
+                    <article class="benefit">
+                        <span class="benefit-icon" aria-hidden="true">▣</span>
+                        <div>
+                            <h3>Minta rendelés</h3>
+                            <p>Valódi fizetés és kártyaadat-kezelés nélkül.</p>
+                        </div>
+                        <span class="benefit-arrow" aria-hidden="true">›</span>
+                    </article>
+                    <article class="benefit">
+                        <span class="benefit-icon" aria-hidden="true">▱</span>
+                        <div>
+                            <h3>Gyors szállítás</h3>
+                            <p>A csomagot egyenesen az Ön által megadott címre küldjük.</p>
+                        </div>
+                        <span class="benefit-arrow" aria-hidden="true">›</span>
+                    </article>
+                    <article class="benefit">
+                        <span class="benefit-icon" aria-hidden="true">↺</span>
+                        <div>
+                            <h3>Egyszerű ügyintézés</h3>
+                            <p>Kérdés esetén ügyfélszolgálatunk szívesen segít.</p>
+                        </div>
+                        <span class="benefit-arrow" aria-hidden="true">›</span>
+                    </article>
+                </section>
+            </aside>
+        </div>
+        <footer class="page-footer">MŰHELY WEBSHOP <span>·</span> Biztonságos rendelés</footer>
+    </main>
+
+    <script>
+        const formatPrice = (price) =>
+            `${new Intl.NumberFormat('hu-HU').format(price)} Ft`;
+        const productOptions = document.querySelectorAll('.product-option input');
+        const subtotal = document.querySelector('#subtotal');
+        const total = document.querySelector('#total');
+
+        function updateOrderSummary() {
+            const selectedProduct = document.querySelector('.product-option input:checked');
+            const price = Number(selectedProduct.closest('.product-option')
+                .querySelector('.product-price').dataset.price);
+            subtotal.textContent = formatPrice(price);
+            total.textContent = formatPrice(price);
+        }
+
+        productOptions.forEach((option) => {
+            option.addEventListener('change', updateOrderSummary);
+        });
+        updateOrderSummary();
+    </script>
+</body>
+</html>
